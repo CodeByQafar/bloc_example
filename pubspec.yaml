@@ -26,6 +26,9 @@ dependencies:
   #theme
   cupertino_icons: ^1.0.8
 
+  #network
+  vexana: ^5.0.3
+
 
 
 

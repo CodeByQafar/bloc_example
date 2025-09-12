@@ -8,4 +8,11 @@ class LoginModel {
   String password;
 
   LoginModel({required this.email, required this.password});
+
+  factory LoginModel.fromJson(Map<String, dynamic> json) {
+    return _$LoginModelFromJson(json);
+  }
+  Map<String, dynamic> toJson() {
+    return _$LoginModelToJson(this);
+  }
 }
