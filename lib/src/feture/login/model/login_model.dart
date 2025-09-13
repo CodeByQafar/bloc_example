@@ -1,6 +1,5 @@
-
-import 'package:json_serializable/json_serializable.dart';
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
+part 'login_model.g.dart';
 
 @JsonSerializable()
 class LoginModel {
