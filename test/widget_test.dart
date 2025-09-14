@@ -1,15 +1,28 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
+import 'package:bloc_example/src/feture/login/model/login_model.dart';
+import 'package:bloc_example/src/feture/login/service/login_service.dart';
+import 'package:bloc_example/src/production/model/token_model.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:bloc_example/main.dart';
+import 'package:vexana/vexana.dart';
 
 void main() {
-  
+  late INetworkManager networkManager;
+  late LoginService loginService;
+  late LoginModel loginModel;
+  setUp(() async {
+    networkManager = NetworkManager<TokenModel>(
+      options: BaseOptions(
+        baseUrl: "https://identitytoolkit.googleapis.com/v1",
+      ),
+    );
+    loginService = LoginService(networkManager);
+    loginModel = LoginModel(
+      email: 'selman@example.com',
+      password: 'password123',
+    );
+  });
+  test('test name', () async {
+    var response = await loginService.login(loginModel, TokenModel());
+    print(response.data);
+    expect(response.data, isNotNull);
+  });
 }

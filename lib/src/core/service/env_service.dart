@@ -11,5 +11,5 @@ static Future<void> loadEnv() async {
     throw EnvException('Failed to load .env file: ');
   }
 }
-String get token => dotenv.env['TOKEN'] ?? '';
+static String get token => dotenv.env['TOKEN'] ?? '';
 }
