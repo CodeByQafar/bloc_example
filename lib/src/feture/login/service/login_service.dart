@@ -10,15 +10,14 @@ class LoginService {
 
   LoginService(this.networkManager);
 
-  Future<dynamic> login(
+  Future<IResponseModel<TokenModel?, INetworkModel<dynamic>?>> login(
     LoginModel dataModel,
-    TokenModel parseModel,
   ) async {
-    return await networkManager.send<TokenModel, LoginModel>(
+    return await networkManager.send<TokenModel,TokenModel>(
       '/accounts:signUp?key=${EnvService.token}',
-      parseModel: parseModel,
-      data: dataModel,
       method: RequestType.POST,
+      parseModel: TokenModel(),
+      data: dataModel,
     );
   }
 }
