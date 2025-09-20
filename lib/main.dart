@@ -1,3 +1,4 @@
+import 'package:bloc_example/src/core/theme/theme.dart';
 import 'package:bloc_example/src/feture/home/view/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +11,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-  );
+ 
   await EnvService.loadEnv();
   runApp(MyApp());
 }
@@ -22,8 +21,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       debugShowCheckedModeBanner: false,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      theme: AppTheme.lightTheme,
       title: 'Bloc Example',
       home: HomeView(),
     );

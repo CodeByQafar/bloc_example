@@ -1,8 +1,7 @@
 
+import 'package:bloc_example/src/production/model/login_response_token_model.dart';
 import 'package:bloc_example/src/core/service/env_service.dart';
-import 'package:bloc_example/src/production/model/token_model.dart';
 import 'package:vexana/vexana.dart';
-
 import '../model/login_model.dart';
 
 class LoginService {
@@ -10,14 +9,16 @@ class LoginService {
 
   LoginService(this.networkManager);
 
-  Future<IResponseModel<TokenModel?, INetworkModel<dynamic>?>> login(
+  Future<IResponseModel<LoginResponseTokenModel?, INetworkModel<dynamic>?>> login(
     LoginModel dataModel,
   ) async {
-    return await networkManager.send<TokenModel,TokenModel>(
+   final response=await networkManager.send<LoginResponseTokenModel,LoginResponseTokenModel>(
       '/accounts:signUp?key=${EnvService.token}',
+      parseModel: LoginResponseTokenModel(),
       method: RequestType.POST,
-      parseModel: TokenModel(),
       data: dataModel,
     );
+  return response;
   }
 }
+

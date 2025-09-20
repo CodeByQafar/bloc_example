@@ -1,12 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'token_model.dart';
+part of 'login_response_token_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-TokenModel _$TokenModelFromJson(Map<String, dynamic> json) => TokenModel(
+LoginResponseTokenModel _$LoginResponseTokenModelFromJson(
+  Map<String, dynamic> json,
+) => LoginResponseTokenModel(
   kind: json['kind'] as String?,
   idToken: json['idToken'] as String?,
   email: json['email'] as String?,
@@ -15,12 +17,13 @@ TokenModel _$TokenModelFromJson(Map<String, dynamic> json) => TokenModel(
   localId: json['localId'] as String?,
 );
 
-Map<String, dynamic> _$TokenModelToJson(TokenModel instance) =>
-    <String, dynamic>{
-      'kind': instance.kind,
-      'idToken': instance.idToken,
-      'email': instance.email,
-      'refreshToken': instance.refreshToken,
-      'expiresIn': instance.expiresIn,
-      'localId': instance.localId,
-    };
+Map<String, dynamic> _$LoginResponseTokenModelToJson(
+  LoginResponseTokenModel instance,
+) => <String, dynamic>{
+  'kind': instance.kind,
+  'idToken': instance.idToken,
+  'email': instance.email,
+  'refreshToken': instance.refreshToken,
+  'expiresIn': instance.expiresIn,
+  'localId': instance.localId,
+};
