@@ -1,6 +1,14 @@
 import 'package:bloc_example/src/core/extension/string_extension.dart';
+import 'package:bloc_example/src/feture/login/cubit/login_cubit.dart';
+import 'package:bloc_example/src/feture/login/cubit/login_cubit_state.dart';
+import 'package:bloc_example/src/feture/login/service/login_service.dart';
 import 'package:flutter/material.dart';
-import 'package:kartal/kartal.dart' as ext;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vexana/vexana.dart';
+
+import '../../../core/constants/padding.dart';
+import '../../../production/model/login_response_token_model.dart';
+import 'widgets/password validated filed/password_validate_filed.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -10,141 +18,189 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final GlobalKey<FormState> _passwordformKey = GlobalKey();
+  final GlobalKey<FormState> _emailformKey = GlobalKey();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  bool isPasswordInvalid = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocusNode.addListener(() {
+      if (!_emailFocusNode.hasFocus && !_emailController.text.isValidEmail) {
+        _emailformKey.currentState?.validate();
+      }
+    });
+    _passwordFocusNode.addListener(() {
+      if (!_passwordFocusNode.hasFocus &&
+          !_passwordController.text.isValidPassword) {
+        _passwordformKey.currentState?.validate();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List<List<dynamic>> passwordValidationRules = [
+      [
+        "Password must contain at least one special character !@#%&*~",
+        _passwordController.text.containAnySpecialCharacter,
+      ],
+      [
+        "Password must contain at least one uppercase letter",
+        _passwordController.text.containAnyUpperCase,
+      ],
+      [
+        "Password must contain at least one number",
+        _passwordController.text.containAnyNumber,
+      ],
+      [
+        "Password must be at least 8 characters",
+        _passwordController.text.characterCountMoreThan8,
+      ],
+    ];
     return SafeArea(
       child: Scaffold(
-        body: Column(
-          children: [
-            Spacer(flex: 2),
-            Form(
-              key: _formKey,
-              child: Column(
+        body: BlocProvider<LoginCubit>(
+          create: (context) => LoginCubit(
+            LoginService(
+              NetworkManager<LoginResponseTokenModel>(
+                options: BaseOptions(
+                  baseUrl: "https://identitytoolkit.googleapis.com/v1",
+                ),
+              ),
+            ),
+          ),
+          child: Column(
+            children: [
+              Spacer(flex: 2),
+              Column(
                 children: [
                   Text(
                     'Login Page',
                     style: Theme.of(context).textTheme.displayLarge,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      right: 16.0,
-                      bottom: 16.0,
-                      top: 20.0,
-                    ),
-                    child: TextFormField(
-                      validator: (value) =>
-                          value.isValidEmail ? null : "Invalid email",
-                      onChanged: (value) => _formKey.currentState?.validate(),
-
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(hintText: 'Enter your email'),
+                    padding:Paddings.emailTextFieldPadding,
+                    child: Form(
+                      key: _emailformKey,
+                      child: TextFormField(
+                        controller: _emailController,
+                        focusNode: _emailFocusNode,
+                        validator: (value) =>
+                            value.isValidEmail ? null : "Invalid email",
+                        onChanged: (value) {
+                          if (_emailController.text.isValidEmail) {
+                            _emailformKey.currentState?.validate();
+                          }
+                        },
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'Enter your email',
+                        ),
+                      ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      right: 16.0,
-                      bottom: 26.0,
-                      top: 10.0,
-                    ),
-                    child: TextFormField(
-                      controller: _passwordController,
 
-                      validator: (value) {
-                        if (value.isValidPassword) {
-                          return null;
-                        } else if (!value.characterCountMoreThan8) {
-                          return "Password must be at least 8 characters";
-                        } else if (!value.containAnySpecialCharacter) {
-                          return "Password must contain one special character !@#%&*~";
-                        } else if (!value.containAnyNumber) {
-                          return "Password must contain at least one number";
-                        } else if (!value.containAnyUpperCase) {
-                          return "Password must contain at least one uppercase letter";
-                        }
-                      },
-                      onChanged: (value) {
-                        _formKey.currentState?.validate();
-                        setState(() {
-                          _passwordController.text = value;
-                        });
-                      },
-                      keyboardType: TextInputType.visiblePassword,
+                                        padding:Paddings.emailTextFieldPadding,
 
-                      decoration: InputDecoration(
-                        hintText: 'Enter your password',
+                    child: Form(
+                      key: _passwordformKey,
+                      child: TextFormField(
+                        controller: _passwordController,
+                        focusNode: _passwordFocusNode,
+                        validator: (value) =>
+                            value.isValidPassword ? null : 'Invalid password',
+                        onChanged: (value) {
+                          setState(() {});
+                          if (_passwordController.text.isValidPassword) {
+                            _passwordformKey.currentState?.validate();
+                          }
+                        },
+                        keyboardType: TextInputType.visiblePassword,
+                        decoration: InputDecoration(
+                          hintText: 'Enter your password',
+                        ),
                       ),
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      passwordStatement(
-                        "Password must contain at least one special character !@#%&*~",
-                        _passwordController.text.containAnySpecialCharacter,
-                      ),
-                      passwordStatement(
-                        "Password must contain at least one uppercase letter",
-                        _passwordController.text.containAnyUpperCase,
-                      ),
-
-                      passwordStatement(
-                        "Password must contain at least one number",
-                        _passwordController.text.containAnyNumber,
-                      ),
-                      passwordStatement(
-                        " Password must be at least 8 characters",
-                        _passwordController.text.characterCountMoreThan8,
-                      ),
-                    ],
-                  ),
+                  isPasswordInvalid
+                      ? AnimatedOpacity(
+                          duration: Duration(seconds: 1),
+                          opacity: isPasswordInvalid ? 1 : 0,
+                          child: Column(
+                            children: List.generate(
+                              passwordValidationRules.length,
+                              (index) => PasswordValidationFiled(
+                                conditionText:
+                                    passwordValidationRules[index][0],
+                                isConditionValidated:
+                                    passwordValidationRules[index][1],
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
                   Padding(
-                    padding: EdgeInsets.all(10),
-                    child: FilledButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          print("Valid");
-                        } else {
-                          print("Not Valid");
-                        }
-                      },
-                    
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0,
-                          vertical: 12.0,
-                        ),
-                        child: Text(
-                          'Login',
-                          style: Theme.of(context).textTheme.displayMedium,
-                        ),
-                      ),
+                    padding: Paddings.filledButtonPadding,
+                    child: BlocBuilder<LoginCubit,LoginState>(
+                      builder: (context,state) {
+                        return FilledButton(
+                          onPressed: () {
+                            final bool isValidEmail=_emailController.text.isValidEmail;
+                            final bool isValidPassword=_passwordController.text.isValidPassword;
+                        
+                            if (!isValidEmail &&
+                              isValidPassword) {
+                              _emailFocusNode.requestFocus();
+                            }
+                            if (isValidEmail &&
+                              isValidPassword) {
+                              _passwordFocusNode.requestFocus();
+                            }
+                        
+                            _emailformKey.currentState!.validate();
+                            if (!(_passwordformKey.currentState?.validate() ??
+                                false)) {
+                              setState(() {
+                                isPasswordInvalid = true;
+                              });
+                            }
+                            if(isValidEmail&&isValidEmail){
+                              // state.isLodaing
+                            final response=  context.read<LoginCubit>().login(_emailController.text, _passwordController.text);
+                          print(response.toString());
+                            }
+                          },
+                        
+                          child: Padding(
+                            padding:Paddings.filledButtonContentPadding,
+                            child: Text(
+                              'Login',
+                              style: Theme.of(context).textTheme.displayMedium,
+                            ),
+                          ),
+                        );
+                      }
                     ),
                   ),
                 ],
               ),
-            ),
-            Spacer(flex: 3),
-          ],
+              Spacer(flex: 3),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget passwordStatement(String text, bool isCondition) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 4),
-      child: Text(
-        style: Theme.of(context).textTheme.displaySmall!.copyWith(
-          color: isCondition
-              ? Theme.of(context).colorScheme.onTertiary
-              : Theme.of(context).colorScheme.error,
-        ),
-        (isCondition ? '✔️' : '❌') + text,
       ),
     );
   }
