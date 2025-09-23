@@ -20,7 +20,7 @@ void main() async {
     loginService = LoginService(networkManager);
 
     loginModel = LoginModel(
-       'demo${math.Random().nextInt(10000)}@example.com',
+       'demo@example.com',
        'password123',
     );
   });
