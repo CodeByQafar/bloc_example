@@ -8,10 +8,13 @@ class LoginCubit extends Cubit<LoginState> {
     : _loginService = loginService,
       super(LoginState());
   final LoginService _loginService;
-  Future<Map<String, dynamic>?> login(String email, String password) async {
+  Future<dynamic> login(String email, String password) async {
     emit(state.copyWith(isLodaing: true));
+  await Future.delayed(Duration(seconds: 4),(){
+     print('dslisjsn');
+    });
     final response = await _loginService.login(LoginModel(email, password));
     emit(state.copyWith(isLodaing: false));
-    return response.data!.toJson();
+    return response;
   }
 }

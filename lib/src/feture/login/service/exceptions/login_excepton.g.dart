@@ -7,7 +7,11 @@ part of 'login_excepton.dart';
 // **************************************************************************
 
 LoginException _$LoginExceptionFromJson(Map<String, dynamic> json) =>
-    LoginException(Error.fromJson(json['error'] as Map<String, dynamic>));
+    LoginException(
+      error: json['error'] == null
+          ? null
+          : Error.fromJson(json['error'] as Map<String, dynamic>),
+    );
 
 Map<String, dynamic> _$LoginExceptionToJson(LoginException instance) =>
     <String, dynamic>{'error': instance.error};

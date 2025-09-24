@@ -4,8 +4,8 @@ part 'login_excepton.g.dart';
 
 @JsonSerializable()
 class LoginException extends INetworkModel<LoginException> {
-  final Error error;
-  const LoginException(this.error);
+  final Error? error;
+  const LoginException({this.error});
   @override
   LoginException fromJson(Map<String, dynamic> json) {
     return _$LoginExceptionFromJson(json);

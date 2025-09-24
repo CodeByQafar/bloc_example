@@ -91,7 +91,7 @@ class _LoginViewState extends State<LoginView> {
                     style: Theme.of(context).textTheme.displayLarge,
                   ),
                   Padding(
-                    padding:Paddings.emailTextFieldPadding,
+                    padding: Paddings.emailTextFieldPadding,
                     child: Form(
                       key: _emailformKey,
                       child: TextFormField(
@@ -112,8 +112,7 @@ class _LoginViewState extends State<LoginView> {
                     ),
                   ),
                   Padding(
-
-                                        padding:Paddings.emailTextFieldPadding,
+                    padding: Paddings.emailTextFieldPadding,
 
                     child: Form(
                       key: _passwordformKey,
@@ -154,45 +153,58 @@ class _LoginViewState extends State<LoginView> {
                       : SizedBox.shrink(),
                   Padding(
                     padding: Paddings.filledButtonPadding,
-                    child: BlocBuilder<LoginCubit,LoginState>(
-                      builder: (context,state) {
+                    child: BlocBuilder<LoginCubit, LoginState>(
+                      builder: (context, state) {
                         return FilledButton(
-                          onPressed: () {
-                            final bool isValidEmail=_emailController.text.isValidEmail;
-                            final bool isValidPassword=_passwordController.text.isValidPassword;
-                        
-                            if (!isValidEmail &&
-                              isValidPassword) {
-                              _emailFocusNode.requestFocus();
-                            }
-                            if (isValidEmail &&
-                              isValidPassword) {
-                              _passwordFocusNode.requestFocus();
-                            }
-                        
-                            _emailformKey.currentState!.validate();
-                            if (!(_passwordformKey.currentState?.validate() ??
-                                false)) {
-                              setState(() {
-                                isPasswordInvalid = true;
-                              });
-                            }
-                            if(isValidEmail&&isValidEmail){
-                              // state.isLodaing
-                            final response=  context.read<LoginCubit>().login(_emailController.text, _passwordController.text);
-                          print(response.toString());
+                          onPressed: () async{
+                            if (!state.isLodaing) {
+                              final bool isValidEmail =
+                                  _emailController.text.isValidEmail;
+                              final bool isValidPassword =
+                                  _passwordController.text.isValidPassword;
+
+                              if (!isValidEmail && isValidPassword) {
+                                _emailFocusNode.requestFocus();
+                              }
+                              if (isValidEmail && isValidPassword) {
+                                _passwordFocusNode.requestFocus();
+                              }
+
+                              _emailformKey.currentState!.validate();
+                              if (!(_passwordformKey.currentState?.validate() ??
+                                  false)) {
+                                setState(() {
+                                  isPasswordInvalid = true;
+                                });
+                              }
+                              if (isValidEmail && isValidEmail) {
+                                final response = context
+                                    .read<LoginCubit>()
+                                    .login(
+                                      _emailController.text,
+                                      _passwordController.text,
+                                    );
+// Future.delayed(Duration(seconds: 3),(){
+//   if(response.)
+// });
+                              }
                             }
                           },
-                        
+
                           child: Padding(
-                            padding:Paddings.filledButtonContentPadding,
-                            child: Text(
-                              'Login',
-                              style: Theme.of(context).textTheme.displayMedium,
-                            ),
+                            padding: Paddings.filledButtonContentPadding,
+
+                            child: state.isLodaing
+                                ? CircularProgressIndicator()
+                                : Text(
+                                    'Login',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium,
+                                  ),
                           ),
                         );
-                      }
+                      },
                     ),
                   ),
                 ],
