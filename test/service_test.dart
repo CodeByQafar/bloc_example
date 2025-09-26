@@ -8,13 +8,14 @@ import 'package:bloc_example/src/core/service/env_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vexana/vexana.dart';
 import 'dart:math' as math;
-import 'dart:developer';
 
 void main() async {
   await EnvService.loadEnv();
   late INetworkManager networkManager;
   late LoginService loginService;
-  late LoginModel loginModel;
+  late LoginModel succsesfulLoginModel;
+  late LoginModel unSuccsesfulLoginModel;
+
   setUp(() {
     networkManager = NetworkManager<LoginException>(
       errorModel: LoginException(),
@@ -24,32 +25,25 @@ void main() async {
     );
     loginService = LoginService(networkManager);
 
-    loginModel = LoginModel(
-      'demaw${math.Random().nextInt(10000)}@example.com',
-      'password123',
+    succsesfulLoginModel = LoginModel(
+      '${math.Random().nextInt(10000)}demo${math.Random().nextInt(10000)}@example.com',
+      'password${math.Random().nextInt(10000)}',
     );
+    unSuccsesfulLoginModel = LoginModel('demo@example.com', 'password123');
   });
-  test('Login Service Succses test', () async {
-    final response = await loginService.login(loginModel);
-    expect(response, isNotNull);
-    if (response.isSuccess) {
-      final data =
-          (response
-                  as NetworkSuccessResult<
-                    LoginResponseTokenModel,
-                    LoginException
-                  >)
-              .data;
-      expect(data, isNotNull);
-    } else {
-      final error =
-          (response
-                  as NetworkErrorResult<
-                    LoginResponseTokenModel,
-                    LoginException
-                  >)
-              .error;
-      expect(error, isNotNull);
-    }
+  group('Login succsesful and unsuccsesful response test', () {
+
+    test('Login Service Succses test', () async {
+     NetworkResult<LoginResponseTokenModel, INetworkModel<dynamic>>response =
+          await loginService.login(succsesfulLoginModel);
+
+      expect(response.isSuccess, true);
+    });
+
+    test('Login Service error test', () async {
+      NetworkResult<LoginResponseTokenModel, INetworkModel<dynamic>> response =
+          await loginService.login(unSuccsesfulLoginModel);
+      expect(response.isError, true);
+    });
   });
 }

@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vexana/vexana.dart';
 
+import '../../../core/Common/snackbars.dart';
 import '../../../core/constants/padding.dart';
 import '../../../production/model/login_response_token_model.dart';
+import '../service/exceptions/login_excepton.dart';
 import 'widgets/password validated filed/password_validate_filed.dart';
 
 class LoginView extends StatefulWidget {
@@ -156,7 +158,7 @@ class _LoginViewState extends State<LoginView> {
                     child: BlocBuilder<LoginCubit, LoginState>(
                       builder: (context, state) {
                         return FilledButton(
-                          onPressed: () async{
+                          onPressed: () async {
                             if (!state.isLodaing) {
                               final bool isValidEmail =
                                   _emailController.text.isValidEmail;
@@ -177,31 +179,52 @@ class _LoginViewState extends State<LoginView> {
                                   isPasswordInvalid = true;
                                 });
                               }
-                              if (isValidEmail && isValidEmail) {
-                                final response = context
+                              if (isValidEmail && isValidPassword) {
+                                NetworkResult<
+                                  LoginResponseTokenModel,
+                                  INetworkModel<dynamic>
+                                >
+                                response = await context
                                     .read<LoginCubit>()
                                     .login(
                                       _emailController.text,
                                       _passwordController.text,
                                     );
-// Future.delayed(Duration(seconds: 3),(){
-//   if(response.)
-// });
+                                Future.delayed(Duration(seconds: 3), () {
+                                  if (response.isSuccess) {
+                                    AppSnackbars.showSnackBar(
+                                      context,
+                                      'Your account created succesfully',
+                                    );
+                                  } else {
+                                    final error =
+                                        (response
+                                                as NetworkErrorResult<
+                                                  LoginResponseTokenModel,
+                                                  LoginException
+                                                >)
+                                            .error;
+                                    AppSnackbars.showSnackBar(
+                                      context,
+                                      'Error message: ${error.model!.error!.message}',
+                                    );
+                                  }
+                                });
                               }
                             }
                           },
 
-                          child: Padding(
-                            padding: Paddings.filledButtonContentPadding,
-
-                            child: state.isLodaing
+                          child: SizedBox(
+                            width: 150,
+                            height: 45,
+                            child:Center(child:state.isLodaing
                                 ? CircularProgressIndicator()
                                 : Text(
                                     'Login',
                                     style: Theme.of(
                                       context,
                                     ).textTheme.displayMedium,
-                                  ),
+                                  ), ) ,
                           ),
                         );
                       },
