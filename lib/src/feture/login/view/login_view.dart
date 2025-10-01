@@ -76,7 +76,9 @@ class _LoginViewState extends State<LoginView> {
         body: BlocProvider<LoginCubit>(
           create: (context) => LoginCubit(
             LoginService(
-              NetworkManager<LoginResponseTokenModel>(
+              NetworkManager<LoginException>(
+                errorModel: LoginException(),
+                isEnableLogger: true,
                 options: BaseOptions(
                   baseUrl: "https://identitytoolkit.googleapis.com/v1",
                 ),
@@ -197,17 +199,20 @@ class _LoginViewState extends State<LoginView> {
                                       'Your account created succesfully',
                                     );
                                   } else {
-                                    final error =
-                                        (response
-                                                as NetworkErrorResult<
-                                                  LoginResponseTokenModel,
-                                                  LoginException
-                                                >)
-                                            .error;
-                                    AppSnackbars.showSnackBar(
-                                      context,
-                                      'Error message: ${error.model!.error!.message}',
-                                    );
+                                    try {
+                                      final error =
+                                          (response
+                                                  as NetworkErrorResult<
+                                                    LoginResponseTokenModel,
+                                                    LoginException
+                                                  >)
+                                              .error;
+                                      AppSnackbars.showSnackBar(
+                                        context,
+                                        'Error message: ${error.model!.error!.message}',
+                                      );
+                                    } catch (e) {}
+                                    ;
                                   }
                                 });
                               }
@@ -217,14 +222,16 @@ class _LoginViewState extends State<LoginView> {
                           child: SizedBox(
                             width: 150,
                             height: 45,
-                            child:Center(child:state.isLodaing
-                                ? CircularProgressIndicator()
-                                : Text(
-                                    'Login',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.displayMedium,
-                                  ), ) ,
+                            child: Center(
+                              child: state.isLodaing
+                                  ? CircularProgressIndicator()
+                                  : Text(
+                                      'Login',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.displayMedium,
+                                    ),
+                            ),
                           ),
                         );
                       },

@@ -32,18 +32,19 @@ void main() async {
     unSuccsesfulLoginModel = LoginModel('demo@example.com', 'password123');
   });
   group('Login succsesful and unsuccsesful response test', () {
-
     test('Login Service Succses test', () async {
-     NetworkResult<LoginResponseTokenModel, INetworkModel<dynamic>>response =
-          await loginService.login(succsesfulLoginModel);
-
+      final response =
+          await loginService.login(succsesfulLoginModel) as NetworkSuccessResult<LoginResponseTokenModel, LoginException>;
       expect(response.isSuccess, true);
     });
 
     test('Login Service error test', () async {
-      NetworkResult<LoginResponseTokenModel, INetworkModel<dynamic>> response =
-          await loginService.login(unSuccsesfulLoginModel);
+      final response =
+          await loginService.login(unSuccsesfulLoginModel) as NetworkErrorResult<LoginException, LoginException>;
       expect(response.isError, true);
     });
   });
 }
+
+
+// solve type error 

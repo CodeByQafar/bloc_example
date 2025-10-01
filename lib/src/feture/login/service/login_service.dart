@@ -19,11 +19,12 @@ class LoginService {
           '/accounts:signUp?key=${EnvService.token}',
           parseModel: LoginResponseTokenModel(),
           method: RequestType.POST,
+          // options: Options(),
           data: dataModel,
         );
     if (response.isSuccess) {
       return response
-          as NetworkSuccessResult<LoginResponseTokenModel, LoginResponseTokenModel>;
+          as NetworkSuccessResult<LoginResponseTokenModel, LoginException>;
     } else {
       return response
           as NetworkErrorResult<LoginResponseTokenModel, LoginException>;
