@@ -16,8 +16,6 @@ class LoginCubit extends Cubit<LoginState> {
     String password,
   ) async {
     emit(state.copyWith(isLodaing: true));
-    await Future.delayed(Duration(seconds: 2), () {
-    });
     final response = await _loginService.login(LoginModel(email, password));
     emit(state.copyWith(isLodaing: false));
     return response;

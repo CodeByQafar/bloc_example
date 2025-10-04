@@ -117,7 +117,6 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   Padding(
                     padding: Paddings.emailTextFieldPadding,
-
                     child: Form(
                       key: _passwordformKey,
                       child: TextFormField(
@@ -170,8 +169,10 @@ class _LoginViewState extends State<LoginView> {
                               if (!isValidEmail && isValidPassword) {
                                 _emailFocusNode.requestFocus();
                               }
-                              if (isValidEmail && isValidPassword) {
+                             else if (isValidEmail && isValidPassword) {
                                 _passwordFocusNode.requestFocus();
+                              }else{
+                                
                               }
 
                               _emailformKey.currentState!.validate();
@@ -192,29 +193,28 @@ class _LoginViewState extends State<LoginView> {
                                       _emailController.text,
                                       _passwordController.text,
                                     );
-                                Future.delayed(Duration(seconds: 3), () {
-                                  if (response.isSuccess) {
+
+                                if (response.isSuccess) {
+                                  AppSnackbars.showSnackBar(
+                                    context,
+                                    'Your account created succesfully',
+                                  );
+                                } else {
+                                  try {
+                                    final error =
+                                        (response
+                                                as NetworkErrorResult<
+                                                  LoginResponseTokenModel,
+                                                  LoginException
+                                                >)
+                                            .error;
                                     AppSnackbars.showSnackBar(
                                       context,
-                                      'Your account created succesfully',
+                                      'Error message: ${error.model!.error!.message}',
                                     );
-                                  } else {
-                                    try {
-                                      final error =
-                                          (response
-                                                  as NetworkErrorResult<
-                                                    LoginResponseTokenModel,
-                                                    LoginException
-                                                  >)
-                                              .error;
-                                      AppSnackbars.showSnackBar(
-                                        context,
-                                        'Error message: ${error.model!.error!.message}',
-                                      );
-                                    } catch (e) {}
-                                    ;
-                                  }
-                                });
+                                  } catch (e) {}
+                                  ;
+                                }
                               }
                             }
                           },

@@ -10,24 +10,30 @@ class LoginService {
 
   LoginService(this.networkManager);
 
-  Future<NetworkResult<LoginResponseTokenModel, INetworkModel<dynamic>>> login(
-    // Future<dynamic> login(
-    LoginModel dataModel,
-  ) async {
-    final response = await networkManager
-        .sendRequest<LoginResponseTokenModel, LoginException>(
-          '/accounts:signUp?key=${EnvService.token}',
-          parseModel: LoginResponseTokenModel(),
-          method: RequestType.POST,
-          // options: Options(),
-          data: dataModel,
-        );
-    if (response.isSuccess) {
-      return response
-          as NetworkSuccessResult<LoginResponseTokenModel, LoginException>;
-    } else {
-      return response
-          as NetworkErrorResult<LoginResponseTokenModel, LoginException>;
-    }
+  // Future<NetworkResult<LoginResponseTokenModel, INetworkModel<dynamic>>> login(
+  Future<dynamic> login(LoginModel dataModel) async {
+    try {
+      final response = await networkManager
+          .sendRequest<LoginResponseTokenModel, LoginException>(
+            '/accounts:signUp?key=${EnvService.token}',
+            parseModel: LoginResponseTokenModel(),
+            method: RequestType.POST,
+
+            // options: Options(),
+            data: dataModel,
+          );
+
+      // if () {
+        // print((response
+        //     as NetworkSuccessResult<LoginResponseTokenModel, LoginResponseTokenModel>).data.toJson());
+        return response;
+         //   as NetworkSuccessResult<LoginResponseTokenModel, LoginResponseTokenModel>;
+      // } else {
+        // print(( response
+        //     as NetworkErrorResult<LoginResponseTokenModel, LoginException>).error.model!.toJson());
+        // return response;
+           // as NetworkErrorResult<LoginResponseTokenModel, LoginException>;
+      // }
+    } catch (e) {}
   }
 }
